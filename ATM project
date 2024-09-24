@@ -1,0 +1,219 @@
+Project Structure:
+Account Class: Handles user details like balance, PIN, and transactions.
+ATM Class: Manages multiple accounts and ATM operations.
+Main Program: Interface that allows users to interact with the ATM.
+Features:
+User Authentication: Users log in with their PIN.
+Multiple Accounts: Simulates multiple user accounts with different balances and PINs.
+Check Balance: Displays the user’s current balance.
+Withdraw Money: Allows users to withdraw funds.
+Deposit Money: Users can deposit money into their account.
+Transaction History: Keeps track of deposits and withdrawals.
+Exit: Logs out the user and exits the program.
+Complete C++ Code:
+cpp
+Copy code
+#include <iostream>
+#include <vector>
+#include <string>
+#include <fstream>
+
+using namespace std;
+
+// Transaction class to store transaction details
+class Transaction {
+public:
+    string type;
+    double amount;
+
+    Transaction(string type, double amount) {
+        this->type = type;
+        this->amount = amount;
+    }
+
+    void printTransaction() {
+        cout << type << ": $" << amount << endl;
+    }
+};
+
+// Account class for handling individual user accounts
+class Account {
+private:
+    string name;
+    int pin;
+    double balance;
+    vector<Transaction> transactions;
+
+public:
+    // Constructor to initialize account with name, pin, and balance
+    Account(string name, int pin, double balance) {
+        this->name = name;
+        this->pin = pin;
+        this->balance = balance;
+    }
+
+    // Function to validate PIN
+    bool validatePin(int inputPin) {
+        return inputPin == pin;
+    }
+
+    // Function to display balance
+    void displayBalance() {
+        cout << "Your current balance is: $" << balance << endl;
+    }
+
+    // Function to withdraw money
+    void withdrawMoney(double amount) {
+        if (amount > balance) {
+            cout << "Insufficient funds!" << endl;
+        } else {
+            balance -= amount;
+            transactions.push_back(Transaction("Withdraw", amount));
+            cout << "You have withdrawn $" << amount << endl;
+            displayBalance();
+        }
+    }
+
+    // Function to deposit money
+    void depositMoney(double amount) {
+        balance += amount;
+        transactions.push_back(Transaction("Deposit", amount));
+        cout << "You have deposited $" << amount << endl;
+        displayBalance();
+    }
+
+    // Function to display transaction history
+    void displayTransactions() {
+        cout << "\nTransaction History:" << endl;
+        for (Transaction t : transactions) {
+            t.printTransaction();
+        }
+    }
+};
+
+// ATM class to handle multiple accounts and manage ATM functionalities
+class ATM {
+private:
+    vector<Account> accounts;
+
+public:
+    // Function to add an account
+    void addAccount(Account account) {
+        accounts.push_back(account);
+    }
+
+    // Function to find account by PIN
+    Account* findAccountByPin(int pin) {
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts[i].validatePin(pin)) {
+                return &accounts[i];
+            }
+        }
+        return nullptr;
+    }
+
+    // Function to simulate ATM menu for an authenticated user
+    void displayMenu(Account* account) {
+        int choice;
+        double amount;
+
+        do {
+            cout << "\nATM Menu:" << endl;
+            cout << "1. Check Balance" << endl;
+            cout << "2. Withdraw Money" << endl;
+            cout << "3. Deposit Money" << endl;
+            cout << "4. View Transaction History" << endl;
+            cout << "5. Exit" << endl;
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+            case 1:
+                account->displayBalance();
+                break;
+            case 2:
+                cout << "Enter the amount to withdraw: ";
+                cin >> amount;
+                account->withdrawMoney(amount);
+                break;
+            case 3:
+                cout << "Enter the amount to deposit: ";
+                cin >> amount;
+                account->depositMoney(amount);
+                break;
+            case 4:
+                account->displayTransactions();
+                break;
+            case 5:
+                cout << "Thank you for using the ATM. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid option! Please try again." << endl;
+            }
+        } while (choice != 5);
+    }
+
+    // ATM operation to authenticate and manage accounts
+    void start() {
+        int pin, attempts = 0;
+        const int maxAttempts = 3;
+        bool isAuthenticated = false;
+        Account* authenticatedAccount = nullptr;
+
+        cout << "Welcome to the ATM Machine!" << endl;
+        
+        while (attempts < maxAttempts && !isAuthenticated) {
+            cout << "Enter your 4-digit PIN: ";
+            cin >> pin;
+            authenticatedAccount = findAccountByPin(pin);
+
+            if (authenticatedAccount != nullptr) {
+                isAuthenticated = true;
+                cout << "Authentication successful!" << endl;
+                displayMenu(authenticatedAccount);
+            } else {
+                attempts++;
+                cout << "Invalid PIN. Try again." << endl;
+            }
+        }
+
+        if (!isAuthenticated) {
+            cout << "Too many incorrect attempts. Exiting..." << endl;
+        }
+    }
+};
+
+int main() {
+    // Creating an ATM object
+    ATM atm;
+
+    // Adding sample accounts to the ATM
+    atm.addAccount(Account("John Doe", 1234, 1000.0));  // Name: John Doe, PIN: 1234, Balance: $1000
+    atm.addAccount(Account("Jane Smith", 5678, 2500.0)); // Name: Jane Smith, PIN: 5678, Balance: $2500
+
+    // Starting the ATM machine
+    atm.start();
+
+    return 0;
+}
+Key Features of the Project:
+Multiple Accounts: The ATM class manages multiple Account objects, each representing a user.
+User Authentication: The system checks the PIN and allows the user to proceed only if authenticated.
+Transactions: Users can perform withdrawals, deposits, and view their transaction history.
+Transaction History: All transactions (deposits and withdrawals) are stored and can be displayed to the user.
+Menu-driven Interface: The ATM provides a simple text-based menu to interact with the system.
+How to Compile and Run:
+Using g++ Compiler (Linux/Windows using MinGW):
+
+bash
+Copy code
+g++ atm_machine_project.cpp -o atm_project
+./atm_project
+Using an IDE:
+
+Open the file in your preferred C++ IDE (e.g., Code::Blocks, Visual Studio, Dev-C++).
+Compile and run the project from within the IDE.
+Future Enhancements:
+File Handling: Add functionality to save user details and transaction history to a file so that it persists between sessions.
+More Advanced Authentication: Add account number-based login in addition to PIN for increased security.
+Improved UI: Develop a graphical interface (using libraries like Qt or SFML) for a more user-friendly experience.
