@@ -9,10 +9,8 @@ Check Balance: Displays the user’s current balance.
 Withdraw Money: Allows users to withdraw funds.
 Deposit Money: Users can deposit money into their account.
 Transaction History: Keeps track of deposits and withdrawals.
-Exit: Logs out the user and exits the program.
-Complete C++ Code:
-cpp
-Copy code
+Exit: Logs out the user and exits 
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -187,7 +185,7 @@ int main() {
     // Creating an ATM object
     ATM atm;
 
-    // Adding sample accounts to the ATM
+
     atm.addAccount(Account("John Doe", 1234, 1000.0));  // Name: John Doe, PIN: 1234, Balance: $1000
     atm.addAccount(Account("Jane Smith", 5678, 2500.0)); // Name: Jane Smith, PIN: 5678, Balance: $2500
 
